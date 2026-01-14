@@ -3,15 +3,21 @@ MESURES DAX – POWER BI
 Projet : Analyse des ventes
 ========================================
 
--- Chiffre d'affaires total
-CA Total :=
-SUM(Ventes[montant_total])
+-- Chiffre d'affaires Client
+CA Client = 
+CALCULATE ([Total des ventes]
+    ,
+    ALLEXCEPT ( 'Superstore 2025', 'Superstore 2025'[Customer ID] )
+)
 
 ----------------------------------------
 
--- Quantité totale vendue
-Quantité Vendue :=
-SUM(Ventes[quantite])
+-- Nombre de commande par client
+NbCommandesParClient = 
+CALCULATE(
+    DISTINCTCOUNT('Superstore 2025'[Order ID]),
+    ALLSELECTED('Superstore 2025')
+)
 
 ----------------------------------------
 
