@@ -1,6 +1,6 @@
 ========================================
 MESURES DAX – POWER BI
-Projet : Analyse des ventes
+Projet : Projet super magasin
 ========================================
 
 -- Chiffre d'affaires Client
@@ -21,100 +21,100 @@ CALCULATE(
 
 ----------------------------------------
 
--- Coût total
-Coût Total :=
-SUM(Ventes[cout])
+-- Nombres de produits
+Nbre de produits = DISTINCTCOUNT('Superstore 2025'[Product ID])
 
 ----------------------------------------
 
--- Marge brute
-Marge Brute :=
-[CA Total] - [Coût Total]
+-- Nombre de commande par clients
+Nombre des ventes = DISTINCTCOUNT('Superstore 2025'[Customer ID])
 
 ----------------------------------------
 
--- Taux de marge (%)
-Taux de Marge (%) :=
-DIVIDE([Marge Brute], [CA Total], 0)
+--Nombre total de commandes
+Nbre totalde Commande = DISTINCTCOUNT('Superstore 2025'[Order ID])
 
 ----------------------------------------
 
--- Nombre total de ventes
-Nombre de Ventes :=
-COUNT(Ventes[vente_id])
+-- Total des quantités vendues
+Total des quantités vendues = sum('Superstore 2025'[Quantity])
 
 ----------------------------------------
 
--- Panier moyen
-Panier Moyen :=
-DIVIDE([CA Total], [Nombre de Ventes], 0)
-
-----------------------------------------
-
--- CA par client
-CA par Client :=
-CALCULATE(
-    [CA Total],
-    ALLEXCEPT(Ventes, Ventes[client_id])
-)
-
-----------------------------------------
-
--- CA par produit
-CA par Produit :=
-CALCULATE(
-    [CA Total],
-    ALLEXCEPT(Ventes, Ventes[produit_id])
-)
-
-----------------------------------------
-
--- CA année en cours
-CA Année en cours :=
-CALCULATE(
-    [CA Total],
-    YEAR(Ventes[date_vente]) = YEAR(TODAY())
-)
-
-----------------------------------------
-
--- CA année précédente
-CA Année Précédente :=
-CALCULATE(
-    [CA Total],
-    SAMEPERIODLASTYEAR(Ventes[date_vente])
-)
-
-----------------------------------------
-
--- Évolution du CA (%)
-Évolution CA (%) :=
-DIVIDE(
-    [CA Année en cours] - [CA Année Précédente],
-    [CA Année Précédente],
-    0
-)
-
-----------------------------------------
-
--- CA cumulatif
-CA Cumulé :=
-CALCULATE(
-    [CA Total],
-    FILTER(
-        ALL(Ventes[date_vente]),
-        Ventes[date_vente] <= MAX(Ventes[date_vente])
+-- Chiffre d'affaire client par catégorie
+CA Client Catégorie = 
+CALCULATE (
+    [Total des ventes],
+    ALLEXCEPT(
+        'Superstore 2025',
+        'Superstore 2025'[Customer ID],
+        'Superstore 2025'[Category]
     )
 )
 
 ----------------------------------------
 
+-- variation mensuelle
+Variation_Mensuelle = DIVIDE([Total des ventes] - [CA_Moins_1], [CA_Moins_1])
+
+----------------------------------------
+
+-- Total des ventes
+Total des ventes = SUMX('Superstore 2025','Superstore 2025'[Sales])
+----------------------------------------
+
+-- CA Mois précédante
+CA_Moins_1 = 
+CALCULATE([Total des ventes], DATEADD('Datum'[Date], -1, MONTH))
+
+----------------------------------------
+
+-- CA année en cours
+--CA Année en cours :=
+--CALCULATE(
+--    [CA Total],
+--    YEAR(Ventes[date_vente]) = YEAR(TODAY())
+--)
+
+----------------------------------------
+
+-- CA année précédente
+--CA Année Précédente :=
+--CALCULATE(
+--    [CA Total],
+--    SAMEPERIODLASTYEAR(Ventes[date_vente])
+--)
+
+----------------------------------------
+
+-- Évolution du CA (%)
+--Évolution CA (%) :=
+--DIVIDE(
+--    [CA Année en cours] - [CA Année Précédente],
+--    [CA Année Précédente],
+--    0
+--)
+
+----------------------------------------
+
+-- CA cumulatif
+--CA Cumulé :=
+--CALCULATE(
+--    [CA Total],
+--    FILTER(
+--        ALL(Ventes[date_vente]),
+--        Ventes[date_vente] <= MAX(Ventes[date_vente])
+--    )
+--)
+
+----------------------------------------
+
 -- Top Client (CA)
-Top Client CA :=
-MAXX(
-    VALUES(Ventes[client_id]),
-    [CA par Client]
-)
+--Top Client CA :=
+--MAXX(
+--    VALUES(Ventes[client_id]),
+--    [CA par Client]
+--)
 
 ========================================
 FIN DES MESURES
